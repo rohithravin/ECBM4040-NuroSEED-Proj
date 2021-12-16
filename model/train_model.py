@@ -3,7 +3,7 @@ import tensorflow as tf
 
 from model.layer import DistanceLayer
 from model.models_cstm import SiameseModel
-from data.generator import SequenceDistDataGenerator
+from model.generator import SequenceDistDataGenerator
 
 def train_siamese_model(
     data : tuple,
