@@ -4,7 +4,7 @@ All preprocessing scripts for NeuroSEEED project
 
 import numpy as np
 from collections import defaultdict
-from Bio import SeqIO, Phylo
+from Bio import SeqIO
 import ete3
 import Levenshtein
 from multiprocessing import Pool
@@ -69,14 +69,22 @@ def fasta_to_numpy(path, lim=None):
 
 
 
-def edit_distance_matrix(X, verbose=False):
+def edit_distance_matrix(
+    X : np.ndarray,
+    n_threads : int = 1,
+    verbose : bool = False) -> np.ndarray:
     """
     Given a numpy array, return pairwise edit distances.
+
+    Note: some of this code was inspired by the NeuroSEED code, specifically here:
+    https://github.com/gcorso/NeuroSEED/blob/master/edit_distance/task/dataset_generator_genomic.py
 
     Args:
     -----
     X:
         Numpy array (e.g. output from fasta_to_numpy()) of sequences
+    n_threads:
+        Integer. Number of threads to use for distance computations.
     verbose:
         Boolean. If True, will print out progress updates.
 
@@ -87,14 +95,20 @@ def edit_distance_matrix(X, verbose=False):
     """
 
     # TODO: multithreaded version of this
-    n = len(X)
-    y = np.zeros((n,n))
-    for i, seq1 in enumerate(X):
-        for j, seq2 in enumerate(X):
-            if i < j:
-                y[i,j] = y[j,i] = Levenshtein.distance(seq1, seq2)
-        if verbose:
-            print(f"Finished row {i} of {n}")
+    if n_threads > 1:
+        with Pool(n_threads) as pool:
+            pool.imap()
+    else:
+        n = len(X)
+        y = np.zeros((n,n))
+        for i, seq1 in enumerate(X):
+            tick = time()
+            for j, seq2 in enumerate(X):
+                if i < j:
+                    y[i,j] = y[j,i] = Levenshtein.distance(seq1, seq2)
+            if verbose:
+                tock = time()
+                print(f"Finished row {i} of {n}.\tTime taken:{(tock-tick):.03f}")
 
     return y
 
