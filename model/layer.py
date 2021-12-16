@@ -11,10 +11,10 @@ class DistanceLayer(tf.keras.layers.Layer):
             d = tf.reduce_sum(tf.square(s1 - s2), -1)
             return d 
         elif self.metric == 'hyperbolic':
-            # TODO: implement hyperbolic distance: https://github.com/gcorso/NeuroSEED/blob/master/util/distance_functions/distance_functions.py
+            HYP_EPSILON = 1e-6
             sqdist = tf.reduce_sum((s1 - s2) ** 2, axis = -1)
-            squnorm = tf.reduce_sum(s2 ** 2 , axis = -1)
-            sqvnorm = tf.reduce_sum(s1 ** 2 , axis = -1)
+            squnorm = tf.clip_by_value( tf.reduce_sum(s2 ** 2 , axis = -1), 0, 1-HYP_EPSILON )
+            sqvnorm = tf.clip_by_value( tf.reduce_sum(s1 ** 2 , axis = -1), 0, 1-HYP_EPSILON )
             x = 1 + ( 2 * (sqdist / ((1 - squnorm)*(1 - sqvnorm)) ))
             z = tf.math.sqrt( (x**2) - 1)
             d = tf.math.log(x + z)
