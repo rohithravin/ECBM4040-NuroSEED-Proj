@@ -75,6 +75,5 @@ def train_siamese_model(
     # TODO: evaluate on other datasets
     # TODO: evaluate train-test randomness vs. reconstruction error
     score = model.evaluate(testing_generator)
-    print(f"Score: {score}")
 
-    return model, history
+    return model, score, history
