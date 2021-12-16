@@ -1,7 +1,6 @@
 import numpy as np
 import tensorflow as tf
 
-from utils.utils_func import make_pairs
 from model.layer import DistanceLayer
 from model.models_cstm import SiameseModel
 from data.generator import SequenceDistDataGenerator
@@ -48,6 +47,7 @@ def train_siamese_model(
 
     training_generator = SequenceDistDataGenerator( X_train, y_train, **kwargs )
     validation_generator = SequenceDistDataGenerator( X_val, y_val, **kwargs )
+    testing_generator = SequenceDistDataGenerator( X_test, y_test, **kwargs )
 
     # Model definitions
     in1 = tf.keras.layers.Input(name="sequence1", shape=(152,))
@@ -74,8 +74,7 @@ def train_siamese_model(
     # Evaluate
     # TODO: evaluate on other datasets
     # TODO: evaluate train-test randomness vs. reconstruction error
-    X_test_s, y_test_s = make_pairs(X_test, y_test)
-    score = model.evaluate(X_test_s, y_test_s)
+    score = model.evaluate(testing_generator)
     print(f"Score: {score}")
 
     return model, history
