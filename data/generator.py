@@ -4,16 +4,28 @@ import itertools
 
 class SequenceDistDataGenerator(tf.keras.utils.Sequence):
     """
-    Generates processed X and Y data, where X data represents pairs of sequences, as a list of two arrays of size (batch_size, sequence_dim)
+    Processes and generates batches of X and Y data, where X data represents pairs of sequences, as a list of two arrays of size (batch_size, sequence_dim)
     and Y data represents the distances between the sequences in each pair, of dimension (batch_size, 1)
 
-    Adapted from: https://stanford.edu/~shervine/blog/keras-how-to-generate-data-on-the-fly
+    In order to write this code, we needed to first figure out how to write a generic data generator, for which
+    we consulted this link: https://stanford.edu/~shervine/blog/keras-how-to-generate-data-on-the-fly
+    
+    Therefore, we started from the generic data generator code at that link, and then adapted that generic code to fit the very
+    unique needs of our problem, where we need to generate TWO paired input sequences (and don't need to use things like data file IDs, etc.)
     """
     def __init__(self, x_seq, dist_mat, batch_size=32, shuffle=True, **kwargs ):
-        'Initialization'
+        ''' 
+        Initialize the SequenceDistDataGenerator class.
+        
+        Inputs:
+            x_seq      (np array): array of input sequences (original X matrix of all samples); dim = ( n, sequence_dim )
+            dist_mat   (np array): distance matrix representing distance between input sequences (ordered the same as X); dim = ( n, n )
+            batch_size (int): batch size (generic data generator parameter)
+            shuffle    (bool): indicator of whether to shuffle samples after each epoch (generic data generator parameter)
+        '''
         self.x_seq = x_seq
         self.dist_mat = dist_mat
-        self.batch_size = batch_size
+        self.batch_size = batch_size 
         self.shuffle = shuffle
         self.on_epoch_end()
         #print('batch size: {0}'.format(self.batch_size))
@@ -21,29 +33,52 @@ class SequenceDistDataGenerator(tf.keras.utils.Sequence):
         #print('kwargs: {0}'.format(kwargs))
 
     def __len__(self):
-        'Denotes the number of batches per epoch'
+        '''
+        Compute number of batches per epoch.
+        
+        NOTE: this is a generic data generator function; unchanged from implementation in https://stanford.edu/~shervine/blog/keras-how-to-generate-data-on-the-fly
+        '''
         return int(np.floor(len(self.indexes) / self.batch_size))
 
     def __getitem__(self, index):
-        'Generate one batch of data'
-        # Generate (paired) indexes for the batch
+        '''
+        Generate one batch of data.
+        
+        NOTE: this is a generic data generator function; unchanged from implementation in https://stanford.edu/~shervine/blog/keras-how-to-generate-data-on-the-fly
+        
+        Inputs:
+            index (int): batch index
+        '''
         batch_indexes = self.indexes[index*self.batch_size:(index+1)*self.batch_size]
         X, y = self.__data_generation(batch_indexes)
         return X, y
 
     def on_epoch_end(self):
-        'Updates complete list of indexes after each epoch'
-        # Note that indexes are paired here - basically, all the combinations of sample indices
+        '''
+        Update complete list of index PAIRS after each epoch (and shuffle if indicated).
+        
+        Note: here we make an update such that we return all COMBINATIONS of paired indexes. 
+        This is to address the specific needs of our problem where we are interested in distances between sample sequence pairs.
+        '''
+        # compute all combinations
         self.indexes = list( itertools.combinations( np.arange(len(self.x_seq)), 2 ) )
+        # shuffle if needed
         if self.shuffle == True:
             np.random.shuffle(self.indexes)
 
     def __data_generation(self, batch_indexes):
-        'Generates data containing batch_size samples' 
-        # X : list of size 2, i.e. list([X0, X1]), containing the pairs of samples
-        # X0: array of dimension (batch_size, sequence_dim)
-        # X1: array of dimension (batch_size, sequence_dim)
-        # y: dist between the pairs of samples in the corresponding entries of X0 and X1, array of length batch_size
+        '''
+        Generate data containing batch_size samples.
+        
+        Inputs:
+            batch_indexes (list): list of combinations of samples
+            
+        Returns:
+            X : list of size 2, i.e. list([X0, X1]), containing the pairs of samples
+                X0: array of dimension (batch_size, sequence_dim)
+                X1: array of dimension (batch_size, sequence_dim)
+            y: dist between the pairs of samples in the corresponding entries of X0 and X1, array of length batch_size
+        '''
         # Initialization
         X = list()
         X.append(np.empty((self.batch_size, self.x_seq.shape[1])))
