@@ -4,7 +4,7 @@ import itertools
 
 class SequenceDistDataGenerator(tf.keras.utils.Sequence):
     """
-    Processes and generates batches of X and Y data, where X data represents pairs of sequences, as a list of two arrays of size (batch_size, sequence_dim)
+    Processes and generates batches of X and Y data on the fly, where X data represents pairs of sequences, as a list of two arrays of size (batch_size, sequence_dim)
     and Y data represents the distances between the sequences in each pair, of dimension (batch_size, 1)
 
     In order to write this code, we needed to first figure out how to write a generic data generator, for which
