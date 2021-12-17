@@ -46,7 +46,8 @@ def pipeline_test_tree():
     process_seqs(path, drop_nontree_seqs = True, split_depth=2, lim=1000, train_test_split='tree', tree_path='/Users/phil/Documents/Columbia/year2/4040/e4040-2021Fall-Project-BIOM-rr3415-pc2946-hs3164/data/gg_12_10_otus_99_annotated.tree')
 
 def pipeline_test_distance():
-    path = '/Users/phil/Documents/Columbia/year2/4040/e4040-2021Fall-Project-BIOM-rr3415-pc2946-hs3164/data/test_seqs.fasta'
+    # path = '/Users/phil/Documents/Columbia/year2/4040/e4040-2021Fall-Project-BIOM-rr3415-pc2946-hs3164/data/test_seqs.fasta'
+    path = './data/test_seqs.fasta'
     process_seqs(path, train_test_split='random', n_threads=12)
 
 # Test calls

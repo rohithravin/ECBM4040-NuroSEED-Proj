@@ -71,18 +71,12 @@ def fasta_to_numpy(path, lim=None):
 
 
 
-def _dist(X, idx):
+def _dist(X, i):
     """
-    Distance function for parallelism
+    Distance function for parallelizing edit_distance_matrix()
     """
-    # i = idx[0]
-    # j = idx[1]
-    # seq1 = X[i]
-    # seq2 = X[j]
-    # d = Levenshtein.distance(seq1, seq2)
-    # return i, j, d
-    x = X[idx]
-    return idx, [Levenshtein.distance(x, seq) for seq in X]
+    n = len(X)
+    return idx, [Levenshtein.distance(X[i], X[j]) for j in range(n) if i < j]
 
 
 def edit_distance_matrix(
@@ -119,7 +113,7 @@ def edit_distance_matrix(
         for i, val in vals:
             y[i, :] = val
             if verbose:
-                print(f"Finished row {i} of n")
+                print(f"Finished row {i} of {n}")
     else:
         for i, seq1 in enumerate(X):
             tick = time()
