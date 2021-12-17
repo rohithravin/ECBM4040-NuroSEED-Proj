@@ -47,13 +47,14 @@ def pipeline_test_tree():
 
 def pipeline_test_distance():
     path = '/Users/phil/Documents/Columbia/year2/4040/e4040-2021Fall-Project-BIOM-rr3415-pc2946-hs3164/data/test_seqs.fasta'
-    process_seqs(path, train_test_split='distance')
+    process_seqs(path, train_test_split='random', n_threads=12)
 
 # Test calls
-# fasta_to_numpy_tests()
-# edit_distance_matrix_test()
-# train_test_split_random_test()
-# train_test_split_random_test_no_y()
-# pipeline_test_1()
-# pipeline_test_tree()
-pipeline_test_distance()
+if __name__ == '__main__':
+    # fasta_to_numpy_tests()
+    # edit_distance_matrix_test()
+    # train_test_split_random_test()
+    # train_test_split_random_test_no_y()
+    # pipeline_test_1()
+    # pipeline_test_tree()
+    pipeline_test_distance()

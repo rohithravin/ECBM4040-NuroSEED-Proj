@@ -8,7 +8,9 @@ from Bio import SeqIO
 import ete3
 import Levenshtein
 from multiprocessing import Pool
+from functools import partial
 from time import time
+from itertools import combinations
 
 def fasta_to_numpy(path, lim=None):
     """
@@ -69,6 +71,20 @@ def fasta_to_numpy(path, lim=None):
 
 
 
+def _dist(X, idx):
+    """
+    Distance function for parallelism
+    """
+    # i = idx[0]
+    # j = idx[1]
+    # seq1 = X[i]
+    # seq2 = X[j]
+    # d = Levenshtein.distance(seq1, seq2)
+    # return i, j, d
+    x = X[idx]
+    return idx, [Levenshtein.distance(x, seq) for seq in X]
+
+
 def edit_distance_matrix(
     X : np.ndarray,
     n_threads : int = 1,
@@ -94,13 +110,17 @@ def edit_distance_matrix(
         Numpy array of pairwise edit distances.
     """
 
-    # TODO: multithreaded version of this
+    n = len(X)
+    y = np.zeros((n,n))
     if n_threads > 1:
-        with Pool(n_threads) as pool:
-            pool.imap()
+        pool = Pool(n_threads)
+        func = partial(_dist, X)
+        vals = pool.imap(func, np.arange(n))
+        for i, val in vals:
+            y[i, :] = val
+            if verbose:
+                print(f"Finished row {i} of n")
     else:
-        n = len(X)
-        y = np.zeros((n,n))
         for i, seq1 in enumerate(X):
             tick = time()
             for j, seq2 in enumerate(X):
@@ -380,6 +400,7 @@ def process_seqs(
     val_size : float = 0.2,
     lim : int = None,
     drop_nontree_seqs : bool = False,
+    n_threads : int = 1,
     verbose : bool = True) -> ((np.array, np.array, np.array), (np.array, np.array, np.array)):
     """
     Given a path to a fasta file, generate X and Y inputs
@@ -405,6 +426,8 @@ def process_seqs(
         Integer. Cutoff for number of input sequences to read in.
     drop_nontree_seqs:
         Boolean. If train_test_split = 'tree', this will limit X to sequences that are in the provided tree.
+    n_threads:
+        Integer. Number of threads used for edit distance calculation.
     verbose:
         Boolean. Prints out 
     
@@ -438,7 +461,7 @@ def process_seqs(
         if verbose:
             tick = time()
             print("Computing distances...")
-        y = edit_distance_matrix(X, verbose=verbose)
+        y = edit_distance_matrix(X, verbose=verbose, n_threads=n_threads)
         if verbose:
             tock = time()
             print(f"\tDone in {(tock - tick):.03f} seconds")
@@ -479,7 +502,7 @@ def process_seqs(
         if verbose:
             tick = time()
             print("Getting edit distances for y_train...")
-        y_train = edit_distance_matrix(X_train, verbose=verbose)
+        y_train = edit_distance_matrix(X_train, verbose=verbose, n_threads=n_threads)
         if verbose:
             tock = time()
             print(f"\tDone in {(tock - tick):.03f} seconds")
@@ -488,7 +511,7 @@ def process_seqs(
         if verbose:
             tick = time()
             print("Getting edit distances for y_test...")
-        y_test = edit_distance_matrix(X_test, verbose=verbose)
+        y_test = edit_distance_matrix(X_test, verbose=verbose, n_threads=n_threads)
         if verbose:
             tock = time()
             print(f"\tDone in {(tock - tick):.03f} seconds")
@@ -497,7 +520,7 @@ def process_seqs(
         if verbose:
             tick = time()
             print("Getting edit distances for y_val...")
-        y_val = edit_distance_matrix(X_val, verbose=verbose)
+        y_val = edit_distance_matrix(X_val, verbose=verbose, n_threads=n_threads)
         if verbose:
             tock = time()
             print(f"\tDone in {(tock - tick):.03f} seconds")
