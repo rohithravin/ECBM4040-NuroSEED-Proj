@@ -57,7 +57,7 @@ def train_siamese_model(
     in1 = tf.keras.layers.Input(name="sequence1", shape=(d1,))
     in2 = tf.keras.layers.Input(name="sequence2", shape=(d1,))
 
-    distance = DistanceLayer(metric=distance_metric)(
+    distance = DistanceLayer(metric=distance_metric, dynamic=True)(
         embedding_model(in1), 
         embedding_model(in2)
     )
