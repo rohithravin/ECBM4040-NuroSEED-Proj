@@ -76,7 +76,7 @@ def _dist(X, i):
     Distance function for parallelizing edit_distance_matrix()
     """
     n = len(X)
-    return idx, [Levenshtein.distance(X[i], X[j]) for j in range(n) if i < j]
+    return i, [Levenshtein.distance(X[i], X[j]) for j in range(n) if i < j]
 
 
 def edit_distance_matrix(
