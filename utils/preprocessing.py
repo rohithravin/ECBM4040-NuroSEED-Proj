@@ -111,7 +111,8 @@ def edit_distance_matrix(
         func = partial(_dist, X)
         vals = pool.imap(func, np.arange(n))
         for i, val in vals:
-            y[i, :] = val
+            m = len(val)
+            y[i, -m:] = y[-m:, i] = val
             if verbose:
                 print(f"Finished row {i} of {n}")
     else:
