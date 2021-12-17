@@ -38,9 +38,9 @@ class DistanceLayer(tf.keras.layers.Layer):
             raise ValueError(f"No metric named '{self.metric}' exists")
 
 class OneHotEncodingLayer(tf.keras.layers.Layer):
-    def __init__(self):
+    def __init__(self, vocab_num = 4):
         super().__init__()
-        self.vocab = 4
+        self.vocab = vocab_num
     
     def call(self, x):
         return tf.one_hot(tf.cast(x, tf.int32), self.vocab)

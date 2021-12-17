@@ -37,7 +37,7 @@ def get_embedding_model():
     # Basic dense NN
     embedding = tf.keras.models.Sequential([
         tf.keras.layers.Input(shape=(152,)),
-        OneHotEncodingLayer(),
+        OneHotEncodingLayer(4),
         tf.keras.layers.Flatten(),
         tf.keras.layers.Dense(128),
     ])
