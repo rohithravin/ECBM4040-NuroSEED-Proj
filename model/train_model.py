@@ -38,23 +38,25 @@ def train_siamese_model(
     """
 
     # Data loading
-    # TODO: build data preprocessing pipeline (process_seqs())
-    # -Sequence to one-hot embedding converter
-    # -Edit distance calculation
-    # -Custom train-test split
-
     ((X_train, X_test, X_val),(y_train, y_test, y_val)) = data
 
+    # Input validation
+    d1 = X_train.shape[1]
+    d2 = X_test.shape[1]
+    d3 = X_val.shape[1]
+
+    if d1 != d2 or d2 != d3:
+        raise ValueError(f"Dimension mismatch: {d1}, {d2}, {d3} should all be equal")
+
+    # Generators from data
     training_generator = SequenceDistDataGenerator( X_train, y_train, **kwargs )
     validation_generator = SequenceDistDataGenerator( X_val, y_val, **kwargs )
     testing_generator = SequenceDistDataGenerator( X_test, y_test, **kwargs )
 
     # Model definitions
-    in1 = tf.keras.layers.Input(name="sequence1", shape=(152,))
-    in2 = tf.keras.layers.Input(name="sequence2", shape=(152,))
+    in1 = tf.keras.layers.Input(name="sequence1", shape=(d1,))
+    in2 = tf.keras.layers.Input(name="sequence2", shape=(d1,))
 
-    # TODO: implement other distance metrics
-    # TODO: implement a couple embedding models
     distance = DistanceLayer(metric=distance_metric)(
         embedding_model(in1), 
         embedding_model(in2)
@@ -72,8 +74,6 @@ def train_siamese_model(
     history = model.fit(training_generator, validation_data=validation_generator, **kwargs)
 
     # Evaluate
-    # TODO: evaluate on other datasets
-    # TODO: evaluate train-test randomness vs. reconstruction error
     score = model.evaluate(testing_generator)
 
     return model, score, history
