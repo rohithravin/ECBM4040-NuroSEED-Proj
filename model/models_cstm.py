@@ -1,5 +1,6 @@
 import numpy as np
 import tensorflow as tf
+from model.layer import OneHotEncodingLayer
 
 class SiameseModel(tf.keras.models.Model):
     def __init__(self, siamese_network):
@@ -35,9 +36,10 @@ class SiameseModel(tf.keras.models.Model):
 def get_embedding_model():
     # Basic dense NN
     embedding = tf.keras.models.Sequential([
-        tf.keras.layers.Embedding(input_dim=4, output_dim=2, input_shape=(152,)),
+        tf.keras.layers.Input(shape=(152,)),
+        OneHotEncodingLayer(),
         tf.keras.layers.Flatten(),
-        tf.keras.layers.Dense(128, activation='relu'),
+        tf.keras.layers.Dense(128),
     ])
 
     return embedding
