@@ -15,10 +15,12 @@ class DistanceLayer(tf.keras.layers.Layer):
             return d 
         elif self.metric == 'hyperbolic':
             #print(s1.numpy())
-            HYP_EPSILON = 1e-6
+            #HYP_EPSILON = 1e-6
             sqdist = tf.reduce_sum((s1 - s2) ** 2, axis = -1)
-            squnorm = tf.clip_by_value( tf.reduce_sum(s2 ** 2 , axis = -1), 0, 1-HYP_EPSILON )
-            sqvnorm = tf.clip_by_value( tf.reduce_sum(s1 ** 2 , axis = -1), 0, 1-HYP_EPSILON )
+            squnorm = tf.reduce_sum(s2 ** 2 , axis = -1)
+            sqvnorm = tf.reduce_sum(s1 ** 2 , axis = -1)
+            #squnorm = tf.clip_by_value( squnorm, 0, 1-HYP_EPSILON )
+            #sqvnorm = tf.clip_by_value( sqvnorm, 0, 1-HYP_EPSILON )
             x = 1 + ( 2 * (sqdist / ((1 - squnorm)*(1 - sqvnorm)) ))
             z = tf.math.sqrt( (x**2) - 1)
             d = tf.math.log(x + z)
