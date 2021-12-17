@@ -76,8 +76,8 @@ def _dist(X, i):
     Distance function for parallelizing edit_distance_matrix()
     """
     n = len(X)
-    return i, [Levenshtein.distance(X[i], X[j]) for j in range(n) if i < j]
-
+    d = [Levenshtein.distance(X[i], X[j]) for j in range(n) if i < j]
+    return i, d
 
 def edit_distance_matrix(
     X : np.ndarray,
@@ -112,7 +112,8 @@ def edit_distance_matrix(
         vals = pool.imap(func, np.arange(n))
         for i, val in vals:
             m = len(val)
-            y[i, -m:] = y[-m:, i] = val
+            if m > 0:
+                y[i, -m:] = y[-m:, i] = val
             if verbose:
                 print(f"Finished row {i} of {n}")
     else:
