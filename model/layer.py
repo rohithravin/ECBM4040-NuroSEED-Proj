@@ -2,15 +2,19 @@ import numpy as np
 import tensorflow as tf
 
 class DistanceLayer(tf.keras.layers.Layer):
-    def __init__(self, metric='euclidean'):
-        super().__init__()
+    def __init__(self, metric='euclidean', dynamic=False):
+        super().__init__(dynamic=dynamic)
         self.metric = metric
+        
+    def compute_output_shape(self, input_shape):
+        return (input_shape[0],)
     
     def call(self, s1, s2):
         if self.metric == 'euclidean':
             d = tf.reduce_sum(tf.square(s1 - s2), -1)
             return d 
         elif self.metric == 'hyperbolic':
+            #print(s1.numpy())
             HYP_EPSILON = 1e-6
             sqdist = tf.reduce_sum((s1 - s2) ** 2, axis = -1)
             squnorm = tf.clip_by_value( tf.reduce_sum(s2 ** 2 , axis = -1), 0, 1-HYP_EPSILON )
