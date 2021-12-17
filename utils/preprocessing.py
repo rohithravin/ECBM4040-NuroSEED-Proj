@@ -11,6 +11,7 @@ from multiprocessing import Pool
 from functools import partial
 from time import time
 from itertools import combinations
+import pickle
 
 def fasta_to_numpy(path, lim=None):
     """
@@ -315,7 +316,7 @@ def _get_clusters(y, indices, size, split_depth) -> (np.ndarray, np.ndarray):
         row_idx = np.random.choice(indices)
         row = y[row_idx]
         n_relatives = 2 ** split_depth # Don't need to do -1 since we include the sequence itself
-        relatives = np.argpartition(row, n_relatives)[n_relatives]
+        relatives = np.argpartition(row, n_relatives)[:n_relatives]
         relatives = np.intersect1d(relatives, indices)
         out = np.union1d(relatives, out)
         indices = np.setdiff1d(indices, out)
@@ -391,12 +392,14 @@ def process_seqs(
     seqs_path : str,
     tree_path : str = None,
     train_test_split : str = 'random',
-    split_depth : int = 0,
+    split_depth : int = 2,
     test_size : float =  0.2,
     val_size : float = 0.2,
     lim : int = None,
     drop_nontree_seqs : bool = False,
     n_threads : int = 1,
+    save_y : str = False,
+    load_y : str = False,
     verbose : bool = True) -> ((np.array, np.array, np.array), (np.array, np.array, np.array)):
     """
     Given a path to a fasta file, generate X and Y inputs
@@ -424,6 +427,10 @@ def process_seqs(
         Boolean. If train_test_split = 'tree', this will limit X to sequences that are in the provided tree.
     n_threads:
         Integer. Number of threads used for edit distance calculation.
+    save_y:
+        String. Path to save y matrices.
+    load_y:
+        String. Path to load y matrices.
     verbose:
         Boolean. Prints out 
     
@@ -454,14 +461,23 @@ def process_seqs(
 
     # Need distances first if we do train-test split by distance
     if train_test_split == "distance":
-        if verbose:
-            tick = time()
-            print("Computing distances...")
-        y = edit_distance_matrix(X, verbose=verbose, n_threads=n_threads)
-        if verbose:
-            tock = time()
-            print(f"\tDone in {(tock - tick):.03f} seconds")
-            print(f"\tShape of y: {y.shape}")
+        if load_y:
+            if verbose:
+                print(f"Loading distances from {load_y}")
+            with open(load_y, "rb") as f:
+                y = pickle.load(f)
+        else:
+            if verbose:
+                tick = time()
+                print("Computing distances...")
+            y = edit_distance_matrix(X, verbose=verbose, n_threads=n_threads)
+            if save_y:
+                with open(save_y, "wb") as f:
+                    pickle.dump(y, f)
+            if verbose:
+                tock = time()
+                print(f"\tDone in {(tock - tick):.03f} seconds")
+                print(f"\tShape of y: {y.shape}")
 
     # Train/test/validation split on X
     if verbose:
@@ -495,31 +511,40 @@ def process_seqs(
 
     # Compute y values after train-test split for faster computations
     if train_test_split != "distance":
-        if verbose:
-            tick = time()
-            print("Getting edit distances for y_train...")
-        y_train = edit_distance_matrix(X_train, verbose=verbose, n_threads=n_threads)
-        if verbose:
-            tock = time()
-            print(f"\tDone in {(tock - tick):.03f} seconds")
-            print(f"\tShape of y_train: {y_train.shape}")
+        if load_y:
+            with open(load_y, "rb") as f:
+                y_train, y_test, y_val = pickle.load(load_y)
 
-        if verbose:
-            tick = time()
-            print("Getting edit distances for y_test...")
-        y_test = edit_distance_matrix(X_test, verbose=verbose, n_threads=n_threads)
-        if verbose:
-            tock = time()
-            print(f"\tDone in {(tock - tick):.03f} seconds")
-            print(f"\tShape of y_test: {y_test.shape}")
+        else:
+            if verbose:
+                tick = time()
+                print("Getting edit distances for y_train...")
+            y_train = edit_distance_matrix(X_train, verbose=verbose, n_threads=n_threads)
+            if verbose:
+                tock = time()
+                print(f"\tDone in {(tock - tick):.03f} seconds")
+                print(f"\tShape of y_train: {y_train.shape}")
 
-        if verbose:
-            tick = time()
-            print("Getting edit distances for y_val...")
-        y_val = edit_distance_matrix(X_val, verbose=verbose, n_threads=n_threads)
-        if verbose:
-            tock = time()
-            print(f"\tDone in {(tock - tick):.03f} seconds")
-            print(f"\tShape of y_val: {y_val.shape}")
+            if verbose:
+                tick = time()
+                print("Getting edit distances for y_test...")
+            y_test = edit_distance_matrix(X_test, verbose=verbose, n_threads=n_threads)
+            if verbose:
+                tock = time()
+                print(f"\tDone in {(tock - tick):.03f} seconds")
+                print(f"\tShape of y_test: {y_test.shape}")
+
+            if verbose:
+                tick = time()
+                print("Getting edit distances for y_val...")
+            y_val = edit_distance_matrix(X_val, verbose=verbose, n_threads=n_threads)
+            if verbose:
+                tock = time()
+                print(f"\tDone in {(tock - tick):.03f} seconds")
+                print(f"\tShape of y_val: {y_val.shape}")
+
+            if save_y:
+                with open(save_y, "wb") as f:
+                    pickle.dump((y_train, y_test, y_val), f)
 
     return ((X_train, X_test, X_val), (y_train, y_test, y_val))
