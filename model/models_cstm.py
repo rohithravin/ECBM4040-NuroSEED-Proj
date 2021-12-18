@@ -33,13 +33,13 @@ class SiameseModel(tf.keras.models.Model):
     def metrics(self):
         return [self.loss_tracker]
 
-def get_embedding_model():
+def get_embedding_model(in_dim=152, out_dim=128):
     # Basic dense NN
     embedding = tf.keras.models.Sequential([
-        tf.keras.layers.Input(shape=(152,)),
+        tf.keras.layers.Input(shape=(in_dim,)),
         OneHotEncodingLayer(4),
         tf.keras.layers.Flatten(),
-        tf.keras.layers.Dense(128),
+        tf.keras.layers.Dense(out_dim),
     ])
 
     return embedding

@@ -3,15 +3,17 @@ All preprocessing scripts for NeuroSEEED project
 """
 
 import numpy as np
+import pickle
+
 from collections import defaultdict
-from Bio import SeqIO
-import ete3
-import Levenshtein
 from multiprocessing import Pool
 from functools import partial
 from time import time
 from itertools import combinations
-import pickle
+
+from Bio import SeqIO
+import ete3
+import Levenshtein
 
 def fasta_to_numpy(path, lim=None):
     """

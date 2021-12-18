@@ -1,5 +1,6 @@
-keras
-tensorflow
+biopython
+ete3
 Levenshtein
 pandas
 numpy
+jupyter
