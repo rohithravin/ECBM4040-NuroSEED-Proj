@@ -22,6 +22,8 @@ class DistanceLayer(tf.keras.layers.Layer):
             #squnorm = tf.clip_by_value( squnorm, 0, 1-HYP_EPSILON )
             #sqvnorm = tf.clip_by_value( sqvnorm, 0, 1-HYP_EPSILON )
             divisor = tf.math.maximum( 1 - squnorm, tf.constant(HYP_EPSILON) ) * tf.math.maximum( 1 - sqvnorm, tf.constant(HYP_EPSILON) )
+            #divisor = tf.math.maximum( (1 - squnorm) * (1 - sqvnorm), tf.constant(HYP_EPSILON) )
+            divisor = tf.math.maximum( divisor, tf.constant(HYP_EPSILON) )
             x = 1 + 2 * sqdist / divisor
             z = tf.math.sqrt( x**2 - 1)
             d = tf.math.log(x + z)
