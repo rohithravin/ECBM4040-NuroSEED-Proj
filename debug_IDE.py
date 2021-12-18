@@ -39,12 +39,17 @@ cwd = os.getcwd()
 
 ############## train siamese model
 # Train and Test Siamese Model
-embedding = get_embedding_model()
-dat_lim = len(X_train)
+embedding = get_embedding_model(model_choice='LINEAR')
+dat_lim = 1000 #len(X_train)
 data = ((X_train[:dat_lim], X_test[:dat_lim], X_val[:dat_lim]), (y_train[:dat_lim,:dat_lim], y_test[:dat_lim], y_val[:dat_lim,:dat_lim]))
 dist = DISTANCE_METRICS['HYPERBOLIC']
 
-model, score, history = train_siamese_model(data, embedding, dist , batch_size=256, epochs=20)
+callbacks = [
+    tf.keras.callbacks.EarlyStopping( monitor='val_loss', patience=2, restore_best_weights=True ),
+    tf.keras.callbacks.EarlyStopping( monitor='loss', patience=5, restore_best_weights=True ),
+]
+
+model, score, history = train_siamese_model(data, embedding, dist , batch_size=256, epochs=5, callbacks=callbacks)
 
 #print score
 print(f'Score for Siamese Model using {dist} distance: {score}')
