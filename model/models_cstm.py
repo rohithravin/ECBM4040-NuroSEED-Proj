@@ -36,7 +36,7 @@ class SiameseModel(tf.keras.models.Model):
     def metrics(self):
         return [self.loss_tracker]
 
-def get_embedding_model(in_dim=152, out_dim=128, model_choice='DENSE'):
+def get_embedding_model(in_dim=152, out_dim=128, model_choice='LINEAR'):
     if model_choice=='LINEAR':
         # Linear dense output layer
         embedding = tf.keras.models.Sequential([
