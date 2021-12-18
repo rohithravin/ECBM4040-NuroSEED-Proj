@@ -14,7 +14,10 @@ class SiameseModel(tf.keras.models.Model):
     def _loss(self, data):
         ((s1, s2), y) = data
         embed_dist = self.siamese_network([s1, s2])
-        return (y - embed_dist)**2 # squared error
+        loss_val = (y - embed_dist)**2 # squared error
+        if tf.reduce_any( tf.math.is_nan(loss_val) ):
+            raise ValueError( 'Loss has become nan.' )
+        return loss_val
     
     def train_step(self, data):
         with tf.GradientTape() as tape:
