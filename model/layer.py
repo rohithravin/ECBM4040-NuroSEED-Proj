@@ -27,6 +27,8 @@ class DistanceLayer(tf.keras.layers.Layer):
             x = 1 + 2 * sqdist / divisor
             z = tf.math.sqrt( x**2 - 1)
             d = tf.math.log(x + z)
+            ###### d = tf.math.acosh(1 + 2 * sqdist / divisor)
+            ####d = tf.math.acosh( 1 + sqdist / 2 / tf.math.sqrt(squnorm) / tf.math.sqrt(sqvnorm) )
             if tf.reduce_any( tf.math.is_nan(d) ):
                 print( 'we\'ve got a nan in d.')
               
