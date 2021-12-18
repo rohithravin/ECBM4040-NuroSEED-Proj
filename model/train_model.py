@@ -9,7 +9,7 @@ def train_siamese_model(
     data : tuple,
     embedding_model : tf.keras.Model,
     distance_metric : str,
-    optimizer : tf.keras.optimizers.Optimizer = tf.keras.optimizers.Adam(1e-5),
+    optimizer : tf.keras.optimizers.Optimizer = tf.keras.optimizers.Adam(1e-5, clipnorm=1),
     **kwargs) -> tf.keras.Model:
     """
     Given training/validation/test data, an embedding model, and a distance metric, perform the NeuroSEED edit distance
