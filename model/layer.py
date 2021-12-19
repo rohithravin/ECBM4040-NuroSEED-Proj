@@ -25,7 +25,7 @@ class DistanceLayer(tf.keras.layers.Layer):
             #divisor = tf.math.maximum( (1 - squnorm) * (1 - sqvnorm), tf.constant(HYP_EPSILON) )
             divisor = tf.math.maximum( divisor, tf.constant(HYP_EPSILON) )
             x = 1 + 2 * sqdist / divisor
-            z = tf.math.sqrt( x**2 - 1)
+            z = tf.math.sqrt( x**2 - 1) if not tf.reduce_any(tf.math.is_inf(x**2)) else x
             d = tf.math.log(x + z)
             ###### d = tf.math.acosh(1 + 2 * sqdist / divisor)
             ####d = tf.math.acosh( 1 + sqdist / 2 / tf.math.sqrt(squnorm) / tf.math.sqrt(sqvnorm) )
