@@ -36,11 +36,13 @@ class SiameseModel(tf.keras.models.Model):
     def metrics(self):
         return [self.loss_tracker]
 
-def get_embedding_model(in_dim=152, out_dim=128, model_choice='LINEAR'):
+def get_embedding_model(in_dim=152, out_dim=128, model_choice='LINEAR', act_func='relu', dropout=0.0, 
+                        mlp_num_units_hidden=128, cnn_num_filters=4):
     if model_choice=='LINEAR':
         # Linear dense output layer
         embedding = tf.keras.models.Sequential([
             tf.keras.layers.Input(shape=(in_dim,)),
+            tf.keras.layers.Dropout(dropout),
             OneHotEncodingLayer(4),
             tf.keras.layers.Flatten(),
             tf.keras.layers.Dense(out_dim, activation=None),
@@ -49,23 +51,25 @@ def get_embedding_model(in_dim=152, out_dim=128, model_choice='LINEAR'):
         # Dense with non-linear hidden layers
         embedding = tf.keras.models.Sequential([
             tf.keras.layers.Input(shape=(in_dim,)),
+            tf.keras.layers.Dropout(dropout),
             OneHotEncodingLayer(4),
             tf.keras.layers.Flatten(),
-            tf.keras.layers.Dense(5, activation='relu'),
-            tf.keras.layers.Dense(5, activation='relu'),
+            tf.keras.layers.Dense(mlp_num_units_hidden, activation=act_func),
+            tf.keras.layers.Dense(mlp_num_units_hidden, activation=act_func),
             tf.keras.layers.Dense(out_dim, activation=None),
         ])  
     elif model_choice=='CNN':
         # CNN model
         embedding = tf.keras.models.Sequential([
             tf.keras.layers.Input(shape=(in_dim,)),
+            tf.keras.layers.Dropout(dropout),
             OneHotEncodingLayer(4),
             tf.keras.layers.Flatten(),
             tf.keras.layers.Reshape((in_dim*4,1)),
-            tf.keras.layers.Conv1D(4, 3, padding='same', activation='relu'),
+            tf.keras.layers.Conv1D(cnn_num_filters, 3, padding='same', activation=act_func),
             tf.keras.layers.BatchNormalization(),
             tf.keras.layers.AveragePooling1D(2),
-            tf.keras.layers.Conv1D(4, 3, padding='same', activation='relu'),
+            tf.keras.layers.Conv1D(cnn_num_filters, 3, padding='same', activation=act_func),
             tf.keras.layers.BatchNormalization(),
             tf.keras.layers.AveragePooling1D(2),
             tf.keras.layers.Flatten(),
