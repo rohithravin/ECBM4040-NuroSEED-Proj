@@ -22,9 +22,28 @@ class DistanceLayer(tf.keras.layers.Layer):
             #squnorm = tf.clip_by_value( squnorm, 0, 1-HYP_EPSILON )
             #sqvnorm = tf.clip_by_value( sqvnorm, 0, 1-HYP_EPSILON )
             divisor = tf.math.maximum( 1 - squnorm, tf.constant(HYP_EPSILON) ) * tf.math.maximum( 1 - sqvnorm, tf.constant(HYP_EPSILON) )
+            #divisor = tf.math.maximum( (1 - squnorm) * (1 - sqvnorm), tf.constant(HYP_EPSILON) )
+            divisor = tf.math.maximum( divisor, tf.constant(HYP_EPSILON) )
             x = 1 + 2 * sqdist / divisor
-            z = tf.math.sqrt( x**2 - 1)
+            z = tf.math.sqrt( x**2 - 1) if not tf.reduce_any(tf.math.is_inf(x**2)) else x
             d = tf.math.log(x + z)
+            ###### d = tf.math.acosh(1 + 2 * sqdist / divisor)
+            ####d = tf.math.acosh( 1 + sqdist / 2 / tf.math.sqrt(squnorm) / tf.math.sqrt(sqvnorm) )
+            # if tf.reduce_any( tf.math.is_nan(d) ):
+            #     print( 'we\'ve got a nan in d.')
+              
+            #     print( 'where: {0}'.format( tf.where(tf.math.is_nan(d)) ) )
+            #     print( 'd: {0}'.format( tf.boolean_mask(d, tf.math.is_nan(d)) ) )
+            #     print( 's1: {0}'.format( tf.boolean_mask(s1, tf.math.is_nan(d)) ) )
+            #     print( 's2: {0}'.format( tf.boolean_mask(s2, tf.math.is_nan(d)) ) )
+            #     print( 'sqdist: {0}'.format( tf.boolean_mask(sqdist, tf.math.is_nan(d)) ) )
+            #     print( 'squnorm: {0}'.format( tf.boolean_mask(squnorm, tf.math.is_nan(d)) ) )
+            #     print( 'sqvnorm: {0}'.format( tf.boolean_mask(sqvnorm, tf.math.is_nan(d)) ) )
+                
+            #     print( 'x: {0}'.format( tf.boolean_mask(x, tf.math.is_nan(d)) ) )
+            #     print( 'z: {0}'.format( tf.boolean_mask(z, tf.math.is_nan(d)) ) )
+            #     print( 'd: {0}'.format( tf.boolean_mask(d, tf.math.is_nan(d)) ) )
+            #     raise ValueError("we've got a nan in d.")
             return d
         elif self.metric == 'manhattan':
             d = tf.reduce_sum( tf.math.abs( s1 - s2), -1)
