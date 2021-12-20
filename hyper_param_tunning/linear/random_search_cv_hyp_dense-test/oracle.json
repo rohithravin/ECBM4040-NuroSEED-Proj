@@ -1,0 +1,1 @@
+{"ongoing_trials": {"tuner0": "ba97efeb310ccba4e46d73f200419ac0"}, "hyperparameters": {"space": [{"class_name": "Choice", "config": {"name": "learning_rate", "default": 0.01, "conditions": [], "values": [0.01, 0.001, 0.0001, 1e-05], "ordered": true}}], "values": {"learning_rate": 0.01}}, "seed": 9394, "seed_state": 9395, "tried_so_far": ["aecbcd7858f3d373a71047bb64208870"]}

@@ -1,0 +1,1 @@
+{"trial_id": "ba97efeb310ccba4e46d73f200419ac0", "hyperparameters": {"space": [{"class_name": "Choice", "config": {"name": "learning_rate", "default": 0.01, "conditions": [], "values": [0.01, 0.001, 0.0001, 1e-05], "ordered": true}}], "values": {"learning_rate": 1e-05}}, "metrics": {"metrics": {}}, "score": null, "best_step": null, "status": "RUNNING"}
