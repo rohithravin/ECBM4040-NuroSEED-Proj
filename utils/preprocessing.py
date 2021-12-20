@@ -515,7 +515,7 @@ def process_seqs(
     if train_test_split != "distance":
         if load_y:
             with open(load_y, "rb") as f:
-                y_train, y_test, y_val = pickle.load(load_y)
+                y_train, y_test, y_val = pickle.load(f)
 
         else:
             if verbose:
