@@ -9,6 +9,8 @@ class DistanceLayer(tf.keras.layers.Layer):
     def compute_output_shape(self, input_shape):
         return (input_shape[0],)
     
+    # Decorate with tf.function to fix model saving
+    @tf.function
     def call(self, s1, s2):
         if self.metric == 'euclidean':
             d = tf.reduce_sum(tf.square(s1 - s2), -1)
@@ -62,6 +64,8 @@ class OneHotEncodingLayer(tf.keras.layers.Layer):
         super().__init__()
         self.vocab = vocab_num
     
+    # Decorate with tf.function to fix model saving
+    @tf.function
     def call(self, x):
         return tf.one_hot(tf.cast(x, tf.int32), self.vocab)
         
