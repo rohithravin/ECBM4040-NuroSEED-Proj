@@ -12,7 +12,7 @@ p3-all-genomes --eq reference_genome,Representative | p3-get-genome-features --e
 ## Setting up environment
 You can create a new environment using conda:
 ```bash
-conda create -n neuroseed python tensorflow keras jupyter -y
+conda create -n neuroseed python tensorflow-gpu keras jupyter -y
 conda activate neuroseed
 pip install -r requirements.txt
 ```
