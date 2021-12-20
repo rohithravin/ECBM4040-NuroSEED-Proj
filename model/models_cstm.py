@@ -8,6 +8,8 @@ class SiameseModel(tf.keras.models.Model):
         self.siamese_network = siamese_network
         self.loss_tracker = tf.keras.metrics.Mean(name="loss")
     
+    # Decorate with tf.function to fix model saving
+    @tf.function
     def call(self, input):
         return self.siamese_network(input)
     
