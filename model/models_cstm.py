@@ -40,6 +40,20 @@ class SiameseModel(tf.keras.models.Model):
 
 def get_embedding_model(in_dim=152, out_dim=128, model_choice='LINEAR', act_func='relu', dropout=0.0, 
                         mlp_num_units_hidden=128, cnn_num_filters=4):
+    ''' 
+    Function to return embedding model, given architecture parameters.
+    Inputs:
+        in_dim       (int): number of features in input sequences
+        out_dim      (int): embedding size to output in final output layer
+        model_choice (str): choice of model architectures (LINEAR, MLP, CNN)
+        act_func     (str): string indicating hidden layer activation function
+        dropout      (dbl): dropout rate for dropout layer
+        mlp_num_units_hidden (int): number of units in the hidden layers; only relevant for MLP model choice
+        cnn_num_filters (int): number of filters in the convolutional layers; only relevant for CNN model choice
+    Outputs:
+        tf.keras.models.Sequential() model
+    '''
+    
     if model_choice=='LINEAR':
         # Linear dense output layer
         embedding = tf.keras.models.Sequential([
@@ -50,7 +64,7 @@ def get_embedding_model(in_dim=152, out_dim=128, model_choice='LINEAR', act_func
             tf.keras.layers.Dense(out_dim, activation=None),
         ])
     elif model_choice=='MLP':
-        # Dense with non-linear hidden layers
+        # Fully connected MLP with non-linear hidden layers
         embedding = tf.keras.models.Sequential([
             tf.keras.layers.Input(shape=(in_dim,)),
             tf.keras.layers.Dropout(dropout),
