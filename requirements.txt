@@ -4,3 +4,4 @@ Levenshtein
 pandas
 numpy
 jupyter
+Keras-tuner
