@@ -31,6 +31,8 @@ The `tutorial.ipynb` notebooks, is our tuturial notebooks and creates and trains
 While working on this project, we created a public Github repository. This is where we did our main work and pushed everything. You can also see that the only collaborators in that public repository are the members of this project, which are the same members (usernames) in the classroom github repository. Once our codebase and analysis was complete, we moved everything to the classroom github repository. If you would like to view our commits and backtrack our progress, please do so on our [public repository]
 (https://github.com/rohithravin/ECBM4040-NuroSEED-Proj). 
 
+# Organization of this directory
+
 ```
 ./
 ├── HS_test_hyperparam_tuning_CNN.ipynb
