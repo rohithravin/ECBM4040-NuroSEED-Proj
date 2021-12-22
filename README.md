@@ -26,3 +26,6 @@ You can view the the Dropbox folder [here](https://www.dropbox.com/sh/18imo1x0oj
 We have multiple notebooks, including previous versions of the notebooks. The `./archived_notebooks` contains the previous versions of our current notebooks. The only notebooks of concern that contain our most recent analysis and experiments are in the main directory `./`.
 
 The `tutorial.ipynb` notebooks, is our tuturial notebooks and creates and trains on our basic model. This would be the notebook we encourage newcomers to start on! 
+
+## Special Notes
+While working on this project, we created a public Github repository. This is where we did our main work and pushed everything. You can also see that the only collaborators in that public repository are the members of this project, which are the same members (usernames) in the classroom github repository. Once our codebase and analysis was complete, we moved everything to the classroom github repository. If you would like to view our commits and backtrack our progress, please do so on our [public repository](https://github.com/rohithravin/ECBM4040-NuroSEED-Proj). 
