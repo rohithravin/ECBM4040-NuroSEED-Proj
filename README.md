@@ -16,3 +16,11 @@ conda create -n neuroseed python tensorflow-gpu keras jupyter -y
 conda activate neuroseed
 pip install -r requirements.txt
 ```
+
+## Data
+The data we are using is too large to be stored in GH. Instead we have stored our data files in a public Dropbox folder. There is not need to manually grab the data as we pull the data ourselves using the `wget` commannd in all our notebooks a scripts when we run our experiments.
+
+You can view the the Dropbox folder [here](https://www.dropbox.com/sh/18imo1x0ojqukeh/AAADw9nKVc-NNpYzjJh9zqE_a?dl=0). 
+
+## Notebooks
+We have multiple notebooks, including previous versions of the notebooks. The `./archived_notebooks` contains the previous versions of our current notebooks. The only notebooks of concern that contain our most recent analysis and experiments are in the main directory `./`.
