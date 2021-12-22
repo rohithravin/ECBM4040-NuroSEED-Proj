@@ -24,3 +24,5 @@ You can view the the Dropbox folder [here](https://www.dropbox.com/sh/18imo1x0oj
 
 ## Notebooks
 We have multiple notebooks, including previous versions of the notebooks. The `./archived_notebooks` contains the previous versions of our current notebooks. The only notebooks of concern that contain our most recent analysis and experiments are in the main directory `./`.
+
+The `tutorial.ipynb` notebooks, is our tuturial notebooks and creates and trains on our basic model. This would be the notebook we encourage newcomers to start on! 
