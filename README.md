@@ -22,10 +22,48 @@ The data we are using is too large to be stored in GH. Instead we have stored ou
 
 You can view the the Dropbox folder [here](https://www.dropbox.com/sh/18imo1x0ojqukeh/AAADw9nKVc-NNpYzjJh9zqE_a?dl=0). 
 
+
+## How to run run code
+To run our code, you just need to run any of the notebooks located in the root directory of the this repository. All the python scripts are used (i.e. imported) in these notebooks.
+
 ## Notebooks
 We have multiple notebooks, including previous versions of the notebooks. The `./archived_notebooks` contains the previous versions of our current notebooks. The only notebooks of concern that contain our most recent analysis and experiments are in the main directory `./`.
 
-The `tutorial.ipynb` notebooks, is our tuturial notebooks and creates and trains on our basic model. This would be the notebook we encourage newcomers to start on! 
+
+### Main Notebook
+The `tutorial.ipynb` notebooks, is our tuturial notebooks and creates and trains on our basic model. This would be the notebook we encourage newcomers to start on! There is no special instructions needed to run the main notebook (`tutorial.ipynb`). Simply ensure you have all the libraries installed in the `requirements.txt` file and you can run the notebook. 
+
+ 
+## Key Functions in Python Scripts
+
+### ./archived_notebooks
+This folder contains previous versions of our notebooks.
+
+### ./hyper_ param _ tunning
+This directory contains the results and logs of the trials that were executed in our Hyperparameter Search experiment.
+
+### ./model
+#### generator.py
+This script contains the code that creates our data generator. It is used in all of our notebooks.
+
+#### layer.py
+This script contains two custom keras layers we have created for this project. One is the DistanceLayer, that calculates the distance between two embeddings. The OneHotEncoding Layer simply one-hots the incoming data. 
+
+### model _ csm.py
+This is where we create our two custom models. One is an embedding model, where we create three different archectures of the embedding model, which are used in  our experiments. 
+
+The other model is our general model - SiameseModel. This is a custom keras model, where we define unique `call` `loss` etc. methods. 
+
+### train_model.py 
+This script is where we combine our two custom models, compile and train the model. This function is used as an abstraction method, where we just have to call this method in our notebooks to build and train the model. 
+
+## ./results
+This directory is where all of our results (pickle files) are stored
+
+## ./utils
+
+The files in this directory relate to gather data from our data sources and preprocessing our data. 
+
 
 ## Special Notes
 While working on this project, we created a public Github repository. This is where we did our main work and pushed everything. You can also see that the only collaborators in that public repository are the members of this project, which are the same members (usernames) in the classroom github repository. Once our codebase and analysis was complete, we moved everything to the classroom github repository. If you would like to view our commits and backtrack our progress, please do so on our [public repository](https://github.com/rohithravin/ECBM4040-NuroSEED-Proj). 
